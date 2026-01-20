@@ -54,7 +54,7 @@
 
     <form method="post">
         {% csrf_token %}
-        <input type="email" name="email" placeholder="E-mail" required>
+        <input type="text" name="username" placeholder="Usuário" required>
         <input type="password" name="password" placeholder="Senha" required>
         <button type="submit">Entrar</button>
     </form>
