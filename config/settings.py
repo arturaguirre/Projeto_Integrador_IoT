@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'usuarios',
     'monitoramento',
     'dashboard',
+    'accounts',
 ]
 
 MIDDLEWARE = [

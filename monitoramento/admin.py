@@ -1,12 +1,28 @@
 from django.contrib import admin
-from .models import SensorData, Equipamento
+from .models import Empresa, Unidade, Sensor, Perfil
 
 
-@admin.register(SensorData)
-class SensorDataAdmin(admin.ModelAdmin):
-    list_display = ('temperatura', 'umidade', 'gas_nh3', 'data_hora')
+@admin.register(Empresa)
+class EmpresaAdmin(admin.ModelAdmin):
+    list_display = ("nome", "cnpj", "email", "telefone", "data_criacao")
+    search_fields = ("nome", "cnpj")
 
 
-@admin.register(Equipamento)
-class EquipamentoAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'tipo', 'local')
+@admin.register(Unidade)
+class UnidadeAdmin(admin.ModelAdmin):
+    list_display = ("nome", "empresa", "cidade", "estado")
+    list_filter = ("estado", "empresa")
+    search_fields = ("nome",)
+
+
+@admin.register(Sensor)
+class SensorAdmin(admin.ModelAdmin):
+    list_display = ("nome", "tipo", "unidade", "ativo")
+    list_filter = ("tipo", "ativo")
+    search_fields = ("nome",)
+
+
+@admin.register(Perfil)
+class PerfilAdmin(admin.ModelAdmin):
+    list_display = ("user", "empresa", "cargo")
+    list_filter = ("cargo", "empresa")
