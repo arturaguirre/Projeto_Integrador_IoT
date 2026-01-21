@@ -1,10 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Página em construção</title>
-</head>
-<body>
-    <h1>Em construção 🚧</h1>
-    <a href="{% url 'dashboard' %}">Voltar</a>
-</body>
-</html>
+{% extends "monitoramento/base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-white"><i class="fas fa-industry me-2 text-info"></i>Unidades e Filiais</h2>
+    <a href="{% url 'cadastro_unidade' %}" class="btn btn-outline-info">
+        <i class="fas fa-plus me-1"></i> Nova Unidade
+    </a>
+</div>
+
+<div class="row">
+    {% for u in unidades %}
+    <div class="col-md-4 mb-4">
+        <div class="card bg-dark text-white border-secondary h-100 shadow">
+            <div class="card-body">
+                <h5 class="card-title text-info">{{ u.nome }}</h5>
+                <p class="card-text text-muted">
+                    <i class="fas fa-map-marker-alt me-2"></i>{{ u.cidade }} - {{ u.estado }}
+                </p>
+                <hr class="border-secondary">
+                <div class="d-flex justify-content-between">
+                    <span>Sensores: <strong>{{ u.sensores.count }}</strong></span>
+                    <a href="#" class="btn btn-sm btn-link text-info p-0">Ver Detalhes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center text-muted py-5">
+        <h3>Nenhuma unidade cadastrada.</h3>
+        <p>Comece cadastrando sua primeira filial no botão acima.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -4,71 +4,116 @@
 {% block content %}
 <div class="container mt-4">
 
-    <h2>Dashboard Geral</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Dashboard Geral</h2>
+        <a href="{% url 'simular_sensor' %}" class="btn btn-outline-info">
+            <i class="fas fa-sync-alt"></i> Simular Nova Leitura
+        </a>
+    </div>
 
-    <!-- Cards -->
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card p-3 text-center">
-                <h5>Total de Sensores</h5>
-                <h3>{{ sensores|length }}</h3>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card bg-dark text-white border-info p-3 text-center shadow">
+                <h6 class="text-uppercase text-info">Total de Sensores</h6>
+                <h2 class="display-4">{{ sensores|length }}</h2>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card p-3 text-center">
-                <h5>Sensores Ativos</h5>
-                <h3>{{ sensores_ativos }}</h3>
+        <div class="col-md-4 mb-3">
+            <div class="card bg-dark text-white border-success p-3 text-center shadow">
+                <h6 class="text-uppercase text-success">Sensores Ativos</h6>
+                <h2 class="display-4">{{ sensores_ativos }}</h2>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card p-3 text-center">
-                <h5>Sensores Inativos</h5>
-                <h3>{{ sensores_inativos }}</h3>
+        <div class="col-md-4 mb-3">
+            <div class="card bg-dark text-white border-danger p-3 text-center shadow">
+                <h6 class="text-uppercase text-danger">Sensores Inativos</h6>
+                <h2 class="display-4">{{ sensores_inativos }}</h2>
             </div>
         </div>
     </div>
 
-    <!-- Tabela -->
-    <div class="mt-5">
-        <h4>Sensores Cadastrados</h4>
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card bg-dark text-white p-4 shadow">
+                <h4>Monitoramento de Temperatura (Média)</h4>
+                <div id="chart-iot"></div>
+            </div>
+        </div>
+    </div>
 
-        <table class="table table-dark table-striped mt-3">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Tipo</th>
-                    <th>Unidade</th>
-                    <th>Status</th>
-                    <th>Instalado em</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for s in sensores %}
-                <tr>
-                    <td>{{ s.nome }}</td>
-                    <td>{{ s.tipo }}</td>
-                    <td>{{ s.unidade.nome }}</td>
-                    <td>
-                        {% if s.ativo %}
-                            <span class="badge bg-success">Ativo</span>
-                        {% else %}
-                            <span class="badge bg-danger">Inativo</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ s.data_instalacao }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center">
-                        Nenhum sensor cadastrado
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="mt-5 mb-5">
+        <h4>Sensores Detalhados</h4>
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mt-3">
+                <thead class="table-secondary text-dark">
+                    <tr>
+                        <th>Nome</th>
+                        <th>Tipo</th>
+                        <th>Unidade</th>
+                        <th>Status</th>
+                        <th>Temperatura</th>
+                        <th>Instalado em</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in sensores %}
+                    <tr>
+                        <td class="fw-bold">{{ s.nome }}</td>
+                        <td>{{ s.tipo }}</td>
+                        <td>{{ s.unidade.nome }}</td>
+                        <td>
+                            {% if s.ativo %}
+                                <span class="badge bg-success">Ativo</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inativo</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-info">{{ s.temperatura|default:"--" }} °C</td>
+                        <td>{{ s.data_instalacao|date:"d/m/Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">
+                            Nenhum sensor cadastrado. Vá ao Admin e adicione alguns!
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    var options = {
+        series: [{
+            name: 'Temperatura',
+            data: [21, 23, 22, 27, 25, 29, 26] // Exemplo inicial, depois integraremos com o banco
+        }],
+        chart: {
+            height: 350,
+            type: 'area',
+            foreColor: '#ccc',
+            toolbar: { show: false }
+        },
+        colors: ['#0dcaf0'],
+        stroke: { curve: 'smooth' },
+        fill: {
+            type: 'gradient',
+            gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.2 }
+        },
+        grid: { borderColor: '#444' },
+        xaxis: {
+            categories: ['10:00', '10:10', '10:20', '10:30', '10:40', '10:50', '11:00']
+        },
+        tooltip: { theme: 'dark' }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart-iot"), options);
+    chart.render();
+</script>
 {% endblock %}
