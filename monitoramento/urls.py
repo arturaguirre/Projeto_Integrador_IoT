@@ -10,4 +10,9 @@ urlpatterns = [
     path("sensores/", views.sensores, name="sensores"),
     path("unidades/", views.unidades, name="unidades"),
     path("planta/", views.planta, name="planta"),
+    path('simular-sensor/', views.simular_sensor, name='simular_sensor'),
+
+    path('cadastro/empresa/', views.cadastro_empresa, name='cadastro_empresa'),
+    path('cadastro/unidade/', views.cadastro_unidade, name='cadastro_unidade'),
+    path('cadastro/sensor/', views.cadastro_sensor, name='cadastro_sensor'),
 ]
