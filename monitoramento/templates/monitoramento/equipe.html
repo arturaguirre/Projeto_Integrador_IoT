@@ -1,0 +1,79 @@
+{% extends 'monitoramento/base.html' %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom border-secondary pb-3">
+        <div>
+            <h2 class="text-white mb-0">
+                <i class="fas fa-users-cog me-2 text-info"></i>Gestão de Equipe
+            </h2>
+            <p class="text-muted small mb-0">Empresa: <span class="text-info">{{ unidade_nome }}</span></p>
+        </div>
+        <a href="{% url 'cadastro_usuario' %}" class="btn btn-info shadow-sm">
+            <i class="fas fa-plus me-1"></i> Adicionar Membro
+        </a>
+    </div>
+
+    <div class="row">
+        {% for membro in equipe %}
+        <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+            <div class="card bg-dark border-secondary h-100 shadow-lg hover-zoom">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-user-circle fa-4x {% if membro.cargo == 'gestor' %}text-info{% elif membro.cargo == 'tecnico' %}text-warning{% else %}text-secondary{% endif %}"></i>
+                    </div>
+                    
+                    <h5 class="card-title text-white mb-1">{{ membro.user.username|upper }}</h5>
+                    <p class="text-muted small mb-3">{{ membro.user.email|default:"Sem e-mail cadastrado" }}</p>
+                    
+                    <div class="mb-3">
+                        <span class="badge rounded-pill px-3 py-2 {% if membro.cargo == 'gestor' %}bg-info text-dark{% elif membro.cargo == 'tecnico' %}bg-warning text-dark{% else %}bg-secondary text-white{% endif %}">
+                            <i class="fas {% if membro.cargo == 'gestor' %}fa-shield-alt{% elif membro.cargo == 'tecnico' %}fa-tools{% else %}fa-user{% endif %} me-1"></i>
+                            {{ membro.get_cargo_display }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-footer border-secondary bg-black bg-opacity-25 d-flex justify-content-around py-3">
+                    <a href="#" class="btn btn-sm btn-outline-light px-3">
+                        <i class="fas fa-edit me-1"></i> Editar
+                    </a>
+                    
+                    {% if membro.user != request.user %}
+                    <a href="{% url 'excluir_usuario' membro.user.id %}" 
+                       class="btn btn-sm btn-outline-danger px-3"
+                       onclick="return confirm('ATENÇÃO: Deseja realmente remover {{ membro.user.username }} da equipe?')">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                    {% else %}
+                    <span class="text-muted small align-self-center">Você</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="card bg-dark border-secondary border-dashed p-5">
+                <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">Nenhum integrante além de você</h4>
+                <p class="text-muted">Clique em "Adicionar Membro" para expandir sua equipe.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    /* Efeito de destaque ao passar o mouse nos cards */
+    .hover-zoom {
+        transition: transform .2s ease-in-out;
+    }
+    .hover-zoom:hover {
+        transform: translateY(-5px);
+        border-color: #0dcaf0 !important; /* Cor info do Bootstrap */
+    }
+    .border-dashed {
+        border-style: dashed !important;
+    }
+</style>
+{% endblock %}

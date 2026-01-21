@@ -1,67 +1,44 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Login | Monitoramento IoT</title>
-    <style>
-        body {
-            background: #0f0f0f;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+{% extends "monitoramento/base.html" %}
 
-        .login-box {
-            background: #1a1a1a;
-            padding: 40px;
-            border-radius: 8px;
-            width: 360px;
-            text-align: center;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 4px;
-            border: none;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #000;
-            color: #fff;
-            border: 1px solid #fff;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-
-        a {
-            color: #aaa;
-            font-size: 14px;
-        }
-    </style>
-</head>
-<body>
-
-<div class="login-box">
-    <!-- Futura logo aqui -->
-    <h2>Faça login</h2>
-
-    <form method="post">
-        {% csrf_token %}
-        <input type="text" name="username" placeholder="Usuário" required>
-        <input type="password" name="password" placeholder="Senha" required>
-        <button type="submit">Entrar</button>
-    </form>
-
-    <br>
-    <a href="#">Criar conta</a>
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card bg-dark text-white border-secondary shadow-lg" style="width: 100%; max-width: 400px;">
+        <div class="card-header border-secondary text-center py-4">
+            <h3 class="mb-0"><i class="fas fa-wind text-info me-2"></i>Login</h3>
+        </div>
+        <div class="card-body p-4">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Usuário</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-secondary border-secondary text-white"><i class="fas fa-user"></i></span>
+                        <input type="text" name="username" class="form-control bg-dark text-white border-secondary" placeholder="Seu usuário" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label d-flex justify-content-between">
+                        Senha
+                        <a href="#" class="text-decoration-none text-muted small hover-info">Esqueceu a senha?</a>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-secondary border-secondary text-white"><i class="fas fa-lock"></i></span>
+                        <input type="password" name="password" class="form-control bg-dark text-white border-secondary" placeholder="Sua senha" required>
+                    </div>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-info font-weight-bold">Entrar no Sistema</button>
+                </div>
+            </form>
+        </div>
+        <div class="card-footer border-secondary text-center py-3">
+            <small class="text-muted">Não tem acesso?</small><br>
+            <a href="#" class="text-info text-decoration-none fw-bold">Solicitar conta ao Gestor</a>
+        </div>
+    </div>
 </div>
 
-</body>
-</html>
+<style>
+    .hover-info:hover { color: #0dcaf0 !important; }
+</style>
+{% endblock %}
