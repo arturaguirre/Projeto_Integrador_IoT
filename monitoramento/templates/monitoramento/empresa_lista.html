@@ -1,48 +1,86 @@
 {% extends 'monitoramento/base.html' %}
 
 {% block content %}
+<style>
+    /* Efeito de zoom suave no card */
+    .hover-zoom {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-zoom:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.4) !important;
+    }
+    .logo-container {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #2b3035;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+</style>
+
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-5 border-bottom border-secondary pb-3">
         <div>
-            <h2 class="text-white mb-0"><i class="fas fa-building me-2 text-info"></i>Gestão de Matrizes</h2>
-            <p class="text-muted small mb-0">Administração global do sistema Boreas</p>
+            <h2 class="text-white mb-0"><i class="fas fa-industry me-2 text-info"></i>Empresas Matrizes</h2>
+            <p class="text-muted small mb-0">Gerencie as organizações cadastradas no sistema</p>
         </div>
-        <a href="{% url 'cadastro_empresa' %}" class="btn btn-info px-4">
-            <i class="fas fa-plus me-1"></i> Nova Empresa
+        <a href="{% url 'cadastro_empresa' %}" class="btn btn-info px-4 shadow-sm">
+            <i class="fas fa-plus me-1"></i> Nova Matriz
         </a>
     </div>
 
     <div class="row">
         {% for empresa in empresas %}
         <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card bg-dark border-secondary h-100 shadow-lg">
+            <div class="card bg-dark border-secondary h-100 shadow-lg hover-zoom">
                 <div class="card-body text-center p-4">
                     <div class="mb-3">
-                        {% if empresa.logo %}
-                            <img src="{{ empresa.logo.url }}" alt="Logo {{ empresa.nome }}" class="rounded-circle border border-secondary shadow-sm" style="width: 80px; height: 80px; object-fit: cover;">
-                        {% else %}
-                            <i class="fas fa-industry fa-4x text-secondary"></i>
-                        {% endif %}
+                        <div class="logo-container border border-secondary">
+                            {% if empresa.logo %}
+                                <img src="{{ empresa.logo.url }}" alt="Logo {{ empresa.nome }}" 
+                                     style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                            {% else %}
+                                <i class="fas fa-building fa-3x text-secondary"></i>
+                            {% endif %}
+                        </div>
                     </div>
                     
                     <h5 class="text-white mb-1">{{ empresa.nome|upper }}</h5>
                     <p class="text-info small mb-3">CNPJ: {{ empresa.cnpj }}</p>
                     
+                    <hr class="border-secondary">
+                    
                     <div class="text-start small text-muted">
-                        <p class="mb-1"><i class="fas fa-envelope me-2"></i>{{ empresa.email }}</p>
-                        <p class="mb-1"><i class="fas fa-phone me-2"></i>{{ empresa.telefone }}</p>
+                        <p class="mb-1 text-truncate"><i class="fas fa-envelope me-2 text-info"></i>{{ empresa.email }}</p>
+                        <p class="mb-1"><i class="fas fa-phone me-2 text-info"></i>{{ empresa.telefone }}</p>
                     </div>
                 </div>
 
                 <div class="card-footer border-secondary bg-black bg-opacity-25 d-flex justify-content-around py-3">
-                    <a href="#" class="btn btn-sm btn-outline-light px-3"><i class="fas fa-edit me-1"></i> Editar</a>
-                    <a href="#" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></a>
+                    <a href="{% url 'editar_empresa' empresa.id %}" class="btn btn-sm btn-outline-light px-3">
+                        <i class="fas fa-edit me-1"></i> Editar
+                    </a>
+                    
+                    <a href="{% url 'excluir_empresa' empresa.id %}" 
+                       class="btn btn-sm btn-outline-danger px-3"
+                       onclick="return confirm('Tem certeza que deseja excluir a empresa {{ empresa.nome }}?')">
+                        <i class="fas fa-trash"></i>
+                    </a>
                 </div>
             </div>
         </div>
         {% empty %}
         <div class="col-12 text-center py-5">
-            <h4 class="text-muted">Nenhuma empresa cadastrada.</h4>
+            <div class="card bg-dark border-secondary border-dashed p-5" style="border-style: dashed !important;">
+                <i class="fas fa-city fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">Nenhuma empresa encontrada</h4>
+                <p class="text-muted">Clique em "Nova Matriz" para começar.</p>
+            </div>
         </div>
         {% endfor %}
     </div>

@@ -34,7 +34,7 @@
         nav .logo {
             font-weight: bold;
             font-size: 22px;
-            color: #0dcaf0; /* Cor Cyan/Info */
+            color: #0dcaf0; 
             letter-spacing: 1px;
         }
 
@@ -46,9 +46,9 @@
         nav a, nav .dropdown-toggle {
             color: #ccc !important;
             text-decoration: none;
-            margin-left: 20px;
+            margin-left: 10px;
             font-size: 14px;
-            padding: 8px 12px;
+            padding: 8px 15px;
             transition: all 0.3s ease;
             border-bottom: 2px solid transparent;
             cursor: pointer;
@@ -56,10 +56,12 @@
 
         nav a:hover, nav .dropdown-toggle:hover {
             color: #fff !important;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
         }
 
         /* LINK ATIVO */
-        nav a.active {
+        nav a.active, nav .dropdown-toggle.active {
             color: #fff !important;
             font-weight: bold;
             border-bottom: 2px solid #0dcaf0;
@@ -71,24 +73,34 @@
             background-color: #1a1a1a;
             border: 1px solid #333;
             margin-top: 10px;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         .dropdown-item {
             font-size: 14px;
-            padding: 10px 20px;
+            padding: 12px 20px;
             color: #ccc !important;
+            transition: all 0.2s;
         }
 
         .dropdown-item:hover {
             background-color: #0dcaf0;
             color: #000 !important;
+            padding-left: 25px;
         }
 
         .container-main {
             padding: 30px;
         }
 
-        /* Scrollbar customizada */
+        /* Alertas */
+        .alert {
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f0f0f; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
@@ -109,12 +121,12 @@
         </a>
 
         <a href="{% url 'sensores' %}" 
-           class="{% if '/sensores/' in request.path and 'cadastro' not in request.path %}active{% endif %}">
+           class="{% if 'sensores' in request.path %}active{% endif %}">
            <i class="fas fa-microchip me-1"></i> Sensores
         </a>
 
         <a href="{% url 'unidades' %}" 
-           class="{% if '/unidades/' in request.path and 'cadastro' not in request.path %}active{% endif %}">
+           class="{% if 'unidades' in request.path %}active{% endif %}">
            <i class="fas fa-industry me-1"></i> Unidades
         </a>
 
@@ -124,17 +136,25 @@
         </a>
 
         <div class="dropdown d-inline">
-            <a class="dropdown-toggle" href="#" role="button" id="dropdownAdmin" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="dropdown-toggle {% if 'administrativo' in request.path or 'cadastro' in request.path %}active{% endif %}" 
+               href="#" role="button" id="dropdownAdmin" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-user-shield me-1"></i> Administrativo
             </a>
-            <ul class="dropdown-menu dropdown-menu-dark shadow" aria-labelledby="dropdownAdmin">
-                <li><a class="dropdown-item" href="{% url 'gerenciar_equipe' %}"><i class="fas fa-users-cog me-2"></i>Gerenciar Equipe</a></li>
-                <li><hr class="dropdown-divider border-secondary"></li>
-                <li><a class="dropdown-item" href="{% url 'cadastro_empresa' %}"><i class="fas fa-building me-2"></i>Nova Empresa (Matriz)</a></li>
+            <ul class="dropdown-menu dropdown-menu-dark shadow-lg" aria-labelledby="dropdownAdmin">
+                <li>
+                    <a class="dropdown-item" href="{% url 'listar_empresas' %}">
+                        <i class="fas fa-city me-2"></i>Gerenciar Empresas
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'gerenciar_equipe' %}">
+                        <i class="fas fa-users-cog me-2"></i>Gerenciar Equipe
+                    </a>
+                </li>
             </ul>
         </div>
 
-        <a href="{% url 'logout' %}" class="text-danger border-0">
+        <a href="{% url 'logout' %}" class="text-danger border-0 ms-4">
             <i class="fas fa-sign-out-alt me-1"></i> Sair
         </a>
     </div>
@@ -143,7 +163,8 @@
 <div class="container container-main">
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show bg-dark text-white border-{{ message.tags }}">
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show bg-dark text-white border-{{ message.tags }} shadow">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle text-success{% else %}fa-exclamation-triangle text-warning{% endif %} me-2"></i>
                 {{ message }}
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -156,7 +177,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // Auto-fechar alertas após 5 segundos
     setTimeout(function() {
         let alerts = document.querySelectorAll('.alert');
         alerts.forEach(function(alert) {

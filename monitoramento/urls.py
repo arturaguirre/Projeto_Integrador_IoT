@@ -19,7 +19,10 @@ urlpatterns = [
     # Administrativo - Gestão de Equipe
     path('administrativo/equipe/', views.gerenciar_equipe, name='gerenciar_equipe'),
     path('administrativo/equipe/excluir/<int:user_id>/', views.excluir_usuario, name='excluir_usuario'),
-    
+    path('administrativo/empresas/editar/<int:empresa_id>/', views.editar_empresa, name='editar_empresa'),
+    path('administrativo/empresas/', views.listar_empresas, name='listar_empresas'),
+    path('administrativo/empresas/excluir/<int:empresa_id>/', views.excluir_empresa, name='excluir_empresa'),
+
     # Cadastros
     path('cadastro/empresa/', views.cadastro_empresa, name='cadastro_empresa'),
     path('cadastro/unidade/', views.cadastro_unidade, name='cadastro_unidade'),
@@ -30,5 +33,4 @@ urlpatterns = [
     path('cadastro/usuario/', views.cadastro_usuario, name='cadastro_usuario'),
     # 2. Cadastro vinculado à nova empresa (Fluxo de criação de conta)
     path('cadastro/usuario/<int:empresa_id>/', views.cadastro_usuario, name='cadastro_usuario_empresa'),
-    path('administrativo/empresas/', views.listar_empresas, name='listar_empresas'),
 ]
