@@ -1,72 +1,121 @@
 {% extends "monitoramento/base.html" %}
 
+{% block title %}Sensores - Boreas IoT{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-white"><i class="fas fa-microchip me-2 text-info"></i>Gerenciamento de Sensores</h2>
-    <a href="{% url 'cadastro_sensor' %}" class="btn btn-info">
-        <i class="fas fa-plus me-1"></i> Cadastrar Novo Equipamento
-    </a>
-</div>
-
-<div class="row">
-    <div class="col-md-7">
-        <div class="card bg-dark text-white border-secondary shadow">
-            <div class="card-header border-secondary bg-black">
-                <h5 class="mb-0">Equipamentos Instalados</h5>
-            </div>
-            <div class="card-body p-0">
-                <table class="table table-dark table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Tipo</th>
-                            <th>Unidade</th>
-                            <th>Status</th>
-                            <th>Última Leitura</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for s in sensores %}
-                        <tr>
-                            <td>{{ s.nome }}</td>
-                            <td><span class="badge bg-secondary">{{ s.tipo_sensor }}</span></td>
-                            <td>{{ s.unidade.nome }}</td>
-                            <td>
-                                {% if s.ativo %}
-                                <span class="text-success"><i class="fas fa-check-circle"></i> Ativo</span>
-                                {% else %}
-                                <span class="text-danger"><i class="fas fa-times-circle"></i> Inativo</span>
-                                {% endif %}
-                            </td>
-                            <td class="text-info">{{ s.temperatura }}°C</td>
-                        </tr>
-                        {% empty %}
-                        <tr><td colspan="5" class="text-center py-4 text-muted">Nenhum sensor cadastrado.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-white mb-0"><i class="fas fa-microchip me-2 text-info"></i>Gerenciamento de Sensores</h2>
+        <div class="d-flex gap-2">
+            <a href="{% url 'simular_sensor' %}" class="btn btn-outline-info">
+                <i class="fas fa-sync-alt me-1"></i> Simular
+            </a>
+            <a href="{% url 'cadastro_sensor' %}" class="btn btn-info shadow-sm">
+                <i class="fas fa-plus me-1"></i> Novo Sensor
+            </a>
         </div>
     </div>
 
-    <div class="col-md-5">
-        <div class="card bg-dark text-white border-secondary shadow">
-            <div class="card-header border-secondary bg-black">
-                <h5 class="mb-0 text-warning"><i class="fas fa-history me-2"></i>Logs de Eventos (IoT)</h5>
-            </div>
-            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                {% for log in logs %}
-                <div class="border-bottom border-secondary mb-2 pb-2">
-                    <small class="text-muted d-block">{{ log.timestamp|date:"d/m/Y H:i" }}</small>
-                    <span class="text-info">{{ log.sensor_nome }}</span> enviou: 
-                    <span class="badge bg-outline-info text-light">{{ log.temperatura }}°C</span> | 
-                    <span class="badge bg-outline-info text-light">{{ log.umidade }}%</span>
+    <div class="row">
+        <div class="col-xl-8 col-lg-7 mb-4">
+            <div class="card bg-dark text-white border-secondary shadow-lg h-100">
+                <div class="card-header border-secondary bg-black bg-opacity-50 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Equipamentos Instalados</h5>
+                    <span class="badge bg-secondary">{{ sensores|length }} total</span>
                 </div>
-                {% empty %}
-                <p class="text-muted text-center">Aguardando dados dos sensores...</p>
-                {% endfor %}
+                <div class="card-body p-0 table-responsive">
+                    <table class="table table-dark table-hover mb-0">
+                        <thead class="table-secondary text-dark">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Tipo</th>
+                                <th>Unidade</th>
+                                <th>Status</th>
+                                <th>Última Leitura</th>
+                                <th class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in sensores %}
+                            <tr class="align-middle">
+                                <td class="fw-bold">{{ s.nome }}</td>
+                                <td><span class="badge bg-outline-secondary border border-secondary text-light">{{ s.tipo_sensor }}</span></td>
+                                <td>{{ s.unidade.nome }}</td>
+                                <td>
+                                    {% if s.ativo %}
+                                    <span class="text-success"><i class="fas fa-check-circle me-1"></i> Ativo</span>
+                                    {% else %}
+                                    <span class="text-danger"><i class="fas fa-times-circle me-1"></i> Inativo</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-info fw-bold">{{ s.temperatura|default:"--" }}°C</td>
+                                <td class="text-center">
+                                    <a href="#" class="btn btn-sm btn-outline-light border-0" title="Editar"><i class="fas fa-edit"></i></a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="fas fa-search fa-2x mb-3 d-block"></i>
+                                    Nenhum sensor cadastrado nesta unidade.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-5 mb-4">
+            <div class="card bg-dark text-white border-secondary shadow-lg h-100">
+                <div class="card-header border-secondary bg-black bg-opacity-50">
+                    <h5 class="mb-0 text-warning"><i class="fas fa-terminal me-2"></i>Live Stream Logs</h5>
+                </div>
+                <div class="card-body terminal-bg" style="max-height: 500px; overflow-y: auto;">
+                    {% for log in logs %}
+                    <div class="log-entry border-bottom border-secondary mb-2 pb-2">
+                        <small class="text-muted d-block font-monospace" style="font-size: 0.75rem;">[{{ log.timestamp|date:"H:i:s" }}]</small>
+                        <div class="d-flex justify-content-between align-items-center mt-1">
+                            <span><i class="fas fa-caret-right text-info me-1"></i>{{ log.sensor_nome }}</span>
+                            <div>
+                                <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25">{{ log.temperatura }}°C</span>
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">{{ log.umidade }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-5">
+                        <p class="text-muted small mb-0">Aguardando dados de telemetria...</p>
+                        <div class="spinner-grow spinner-grow-sm text-info mt-3" role="status"></div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+
+    .terminal-bg {
+        background-color: #0a0c0e !important;
+        scrollbar-width: thin;
+        scrollbar-color: #444 #0a0c0e;
+    }
+    
+    .log-entry:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .bg-outline-info {
+        background: transparent;
+        border: 1px solid #0dcaf0;
+        color: #0dcaf0;
+    }
+    
+    .terminal-bg::-webkit-scrollbar { width: 6px; }
+    .terminal-bg::-webkit-scrollbar-track { background: #0a0c0e; }
+    .terminal-bg::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+</style>
 {% endblock %}

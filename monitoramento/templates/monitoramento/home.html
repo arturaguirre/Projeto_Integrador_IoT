@@ -1,17 +1,83 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Monitoramento IoT</title>
-</head>
-<body>
-    <h1>Sistema de Monitoramento</h1>
+{% extends "monitoramento/base.html" %}
+{% load static %}
 
-    <a href="{% url 'simular' %}">
-        <button>Simular nova leitura</button>
-    </a>
+{% block title %}Início - Boreas IoT{% endblock %}
 
-    <a href="{% url 'dashboard' %}">
-        <button>Ver dashboard</button>
-    </a>
-</body>
-</html>
+{% block content %}
+<div class="container mt-5">
+    <div class="row align-items-center" style="min-height: 70vh;">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+            <h1 class="display-3 fw-bold text-white mb-3">
+                Bem-vindo ao <span class="text-info">Boreas IoT</span>
+            </h1>
+            <p class="lead text-muted mb-4">
+                Plataforma avançada para monitoramento de sensores e gestão de unidades industriais em tempo real.
+            </p>
+            
+            <div class="d-flex gap-3">
+                <a href="{% url 'home' %}" class="btn btn-info btn-lg px-4 fw-bold shadow">
+                    <i class="fas fa-chart-line me-2"></i>Acessar Painel
+                </a>
+                <a href="{% url 'sensores' %}" class="btn btn-outline-light btn-lg px-4">
+                    <i class="fas fa-microchip me-2"></i>Ver Sensores
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card bg-dark border-secondary h-100 p-3 shadow hover-zoom">
+                        <div class="card-body text-center">
+                            <i class="fas fa-plus-circle fa-3x text-info mb-3"></i>
+                            <h5 class="text-white">Simular Dados</h5>
+                            <p class="text-muted small">Gere novas leituras de temperatura para testes.</p>
+                            <a href="{% url 'simular_sensor' %}" class="btn btn-sm btn-outline-info w-100 mt-2">Simular Agora</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card bg-dark border-secondary h-100 p-3 shadow hover-zoom">
+                        <div class="card-body text-center">
+                            <i class="fas fa-map-marked-alt fa-3x text-success mb-3"></i>
+                            <h5 class="text-white">Planta Baixa</h5>
+                            <p class="text-muted small">Visualize a localização exata dos seus dispositivos.</p>
+                            <a href="{% url 'planta' %}" class="btn btn-sm btn-outline-success w-100 mt-2">Ver Mapa</a>
+                        </div>
+                    </div>
+                </div>
+
+                {% if user.is_superuser or user.perfil.cargo|lower == 'gestor' %}
+                <div class="col-md-12">
+                    <div class="card bg-dark border-info border-opacity-25 h-100 p-3 shadow hover-zoom">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="me-4">
+                                <i class="fas fa-user-shield fa-3x text-info"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-white mb-1">Administração</h5>
+                                <p class="text-muted small mb-0">Gerencie usuários, empresas e permissões do sistema.</p>
+                            </div>
+                            <a href="{% url 'gerenciar_equipe' %}" class="btn btn-info ms-auto">
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-zoom {
+        transition: transform 0.3s ease;
+    }
+    .hover-zoom:hover {
+        transform: scale(1.05);
+        border-color: #0dcaf0 !important;
+    }
+</style>
+{% endblock %}

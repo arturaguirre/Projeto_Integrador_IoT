@@ -1,21 +1,31 @@
 {% extends "monitoramento/base.html" %}
 
+{% block title %}{{ titulo }} - Boreas IoT{% endblock %}
+
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-6">
+        <div class="col-md-8 col-lg-6">
             <div class="card bg-dark text-white border-secondary shadow-lg">
                 <div class="card-header border-secondary bg-black bg-opacity-50 text-center py-3">
                     <h3 class="mb-0 text-info font-monospace">{{ titulo }}</h3>
                 </div>
                 
                 <div class="card-body p-4">
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger bg-danger bg-opacity-10 border-danger text-white">
+                            {% for error in form.non_field_errors %}
+                                <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                     <form method="post" enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
                         
                         {% for field in form %}
                         <div class="mb-3">
-                            <label class="form-label text-light fw-bold small">
+                            <label for="{{ field.id_for_label }}" class="form-label text-light fw-bold small">
                                 {{ field.label }}
                             </label>
 
@@ -24,13 +34,16 @@
                             </div>
 
                             {% if field.help_text %}
-                                <div class="form-text text-muted small">{{ field.help_text }}</div>
+                                <div class="form-text text-muted small" style="font-size: 0.75rem;">
+                                    {{ field.help_text|safe }}
+                                </div>
                             {% endif %}
 
                             {% if field.errors %}
                                 {% for error in field.errors %}
-                                    <div class="text-danger small mt-1">
-                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    <div class="text-danger small mt-1 d-flex align-items-center">
+                                        <i class="fas fa-exclamation-circle me-1" style="font-size: 0.8rem;"></i>
+                                        <span>{{ error }}</span>
                                     </div>
                                 {% endfor %}
                             {% endif %}
@@ -39,10 +52,11 @@
 
                         <div class="d-grid gap-2 mt-4">
                             <button type="submit" class="btn btn-info btn-lg fw-bold shadow-sm">
-                                <i class="fas fa-save me-2"></i>Confirmar Cadastro
+                                <i class="fas fa-save me-2"></i>Salvar Dados
                             </button>
-                            <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm border-0">
-                                <i class="fas fa-arrow-left me-1"></i> Voltar sem salvar
+                            
+                            <a href="javascript:history.back()" class="btn btn-link text-secondary text-decoration-none btn-sm">
+                                <i class="fas fa-arrow-left me-1"></i> Cancelar e Voltar
                             </a>
                         </div>
                     </form>
@@ -53,42 +67,53 @@
 </div>
 
 <style>
-    /* Força os inputs do Django a usarem o estilo Bootstrap Dark */
-    input, select, textarea, input[type="file"] {
+    /* Estilização agressiva para garantir que os widgets do Django sigam o tema Dark */
+    input, select, textarea {
         display: block;
         width: 100%;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.95rem;
         color: #fff !important;
-        background-color: #1a1d20 !important;
-        background-clip: padding-box;
+        background-color: #121416 !important;
         border: 1px solid #495057 !important;
         border-radius: 0.375rem;
-        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        transition: border-color .15s ease-in-out;
+    }
+
+    /* Checkboxes precisam de comportamento diferente */
+    input[type="checkbox"] {
+        width: auto;
+        display: inline-block;
+        margin-right: 10px;
     }
 
     input:focus, select:focus {
         border-color: #0dcaf0 !important;
         outline: 0;
-        box-shadow: 0 0 0 0.25rem rgba(13, 202, 240, 0.25) !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 202, 240, 0.15) !important;
     }
 
-    /* Estilo especial para o campo de upload (Logo) */
+    /* Estilo para campos de arquivo (Logo) */
     input[type="file"] {
-        padding: 0.5rem;
-        font-size: 0.875rem;
+        background-color: transparent !important;
+        border: 1px dashed #6c757d !important;
+        padding: 10px;
     }
     
     input[type="file"]::file-selector-button {
         background-color: #343a40;
-        color: white;
-        border: none;
+        color: #0dcaf0;
+        border: 1px solid #0dcaf0;
         border-radius: 4px;
-        padding: 2px 10px;
-        margin-right: 10px;
+        padding: 4px 12px;
+        margin-right: 15px;
         cursor: pointer;
+        font-size: 0.8rem;
+    }
+
+    input[type="file"]::file-selector-button:hover {
+        background-color: #0dcaf0;
+        color: #000;
     }
 </style>
 {% endblock %}

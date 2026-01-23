@@ -1,44 +1,128 @@
-{% extends "monitoramento/base.html" %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Boreas IoT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0f1113;
+            background-image: radial-gradient(circle at 50% 50%, #1a1d20 0%, #0f1113 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .login-card {
+            background-color: #1a1d20;
+            border: 1px solid #2d3238;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+        .input-group-text {
+            background-color: #2b3035;
+            border-color: #495057;
+            color: #0dcaf0;
+        }
+        .form-control {
+            background-color: #121416;
+            border-color: #495057;
+            color: white;
+        }
+        .form-control:focus {
+            background-color: #121416;
+            color: white;
+            border-color: #0dcaf0;
+            box-shadow: 0 0 0 0.25rem rgba(13, 202, 240, 0.15);
+        }
+        .btn-info {
+            background-color: #0dcaf0;
+            border: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-info:hover {
+            background-color: #0baccc;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(13, 202, 240, 0.3);
+        }
+        /* Estilo para o novo botão de cadastro */
+        .btn-outline-info {
+            color: #0dcaf0;
+            border-color: #0dcaf0;
+            transition: all 0.3s;
+        }
+        .btn-outline-info:hover {
+            background-color: rgba(13, 202, 240, 0.1);
+            color: #fff;
+            border-color: #0dcaf0;
+        }
+    </style>
+</head>
+<body>
 
-{% block content %}
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="card bg-dark text-white border-secondary shadow-lg" style="width: 100%; max-width: 400px;">
-        <div class="card-header border-secondary text-center py-4">
-            <h3 class="mb-0"><i class="fas fa-wind text-info me-2"></i>Login</h3>
+<div class="container d-flex justify-content-center">
+    <div class="card login-card text-white p-2" style="width: 100%; max-width: 400px;">
+        <div class="card-header border-0 bg-transparent text-center py-4">
+            <div class="mb-3">
+                <i class="fas fa-wind fa-3x text-info"></i>
+            </div>
+            <h2 class="fw-bold mb-0">Boreas <span class="text-info">IoT</span></h2>
+            <p class="text-muted small">Monitoramento Térmico Inteligente</p>
         </div>
-        <div class="card-body p-4">
+
+        <div class="card-body px-4">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger py-2 small border-0 bg-danger bg-opacity-10 text-danger text-center">
+                        <i class="fas fa-exclamation-circle me-2"></i>{{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
             <form method="post">
                 {% csrf_token %}
                 <div class="mb-3">
-                    <label class="form-label">Usuário</label>
+                    <label class="form-label small fw-bold text-muted">USUÁRIO</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-secondary border-secondary text-white"><i class="fas fa-user"></i></span>
-                        <input type="text" name="username" class="form-control bg-dark text-white border-secondary" placeholder="Seu usuário" required>
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input type="text" name="username" class="form-control" placeholder="Digite seu usuário" required>
                     </div>
                 </div>
+
                 <div class="mb-4">
-                    <label class="form-label d-flex justify-content-between">
-                        Senha
-                        <a href="#" class="text-decoration-none text-muted small hover-info">Esqueceu a senha?</a>
+                    <label class="form-label small fw-bold text-muted d-flex justify-content-between">
+                        SENHA
+                        <a href="#" class="text-info text-decoration-none" style="font-size: 0.7rem;">Esqueceu?</a>
                     </label>
                     <div class="input-group">
-                        <span class="input-group-text bg-secondary border-secondary text-white"><i class="fas fa-lock"></i></span>
-                        <input type="password" name="password" class="form-control bg-dark text-white border-secondary" placeholder="Sua senha" required>
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" name="password" class="form-control" placeholder="Digite sua senha" required>
                     </div>
                 </div>
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-info font-weight-bold">Entrar no Sistema</button>
+
+                <div class="d-grid gap-2 mb-3">
+                    <button type="submit" class="btn btn-info py-2">
+                        ENTRAR NO SISTEMA
+                    </button>
                 </div>
             </form>
         </div>
-        <div class="card-footer border-secondary text-center py-3">
-            <small class="text-muted">Não tem acesso?</small><br>
-            <a href="#" class="text-info text-decoration-none fw-bold">Solicitar conta ao Gestor</a>
+
+        <div class="card-footer border-0 bg-transparent text-center pb-4 px-4">
+            <div class="hr-text text-muted small mb-3">OU</div>
+            <div class="d-grid">
+                <a href="{% url 'registro' %}" class="btn btn-outline-info btn-sm py-2">
+                    <i class="fas fa-user-plus me-2"></i>CADASTRE-SE
+                </a>
+            </div>
+            <p class="text-muted mt-3" style="font-size: 0.75rem;">
+                Problemas no acesso? <a href="mailto:admin@boreasiot.com" class="text-info text-decoration-none">Suporte</a>
+            </p>
         </div>
     </div>
 </div>
 
-<style>
-    .hover-info:hover { color: #0dcaf0 !important; }
-</style>
-{% endblock %}
+</body>
+</html>

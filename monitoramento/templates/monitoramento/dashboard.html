@@ -4,49 +4,90 @@
 {% block content %}
 <div class="container mt-4">
 
+    {% if mostrar_tutorial %}
+    <div class="alert alert-info border-0 shadow-lg d-flex align-items-center p-4 mb-5" style="background-color: rgba(13, 202, 240, 0.15); border-left: 5px solid #0dcaf0 !important;">
+        <div class="me-4 d-none d-md-block">
+            <i class="fas fa-rocket fa-4x text-info"></i>
+        </div>
+        <div class="flex-grow-1">
+            <h4 class="alert-heading fw-bold text-info">Bem-vindo ao Boreas IoT, {{ request.user.username }}!</h4>
+            <p class="mb-3 text-white">Sua empresa <strong>{{ nome_empresa }}</strong> foi cadastrada com sucesso. <br>
+            Para começar a monitorar, o primeiro passo é criar uma <strong>Unidade Operacional</strong>.</p>
+            <div class="d-flex gap-2">
+                <a href="{% url 'cadastro_unidade' %}" class="btn btn-info fw-bold">
+                    <i class="fas fa-plus-circle me-2"></i>1º PASSO: CADASTRAR UNIDADE
+                </a>
+                <button type="button" class="btn btn-outline-light btn-sm" onclick="this.parentElement.parentElement.parentElement.remove()">Fazer isso depois</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Dashboard Geral</h2>
+        <div>
+            <h2 class="mb-0 text-white">Dashboard</h2>
+            <p class="text-muted small mb-0"><i class="fas fa-building me-1"></i> {{ nome_empresa }}</p>
+        </div>
+        
+        {% if total_sensores > 0 %}
         <a href="{% url 'simular_sensor' %}" class="btn btn-outline-info">
-            <i class="fas fa-sync-alt"></i> Simular Nova Leitura
+            <i class="fas fa-sync-alt me-1"></i> Simular Nova Leitura
         </a>
+        {% endif %}
     </div>
 
     <div class="row">
         <div class="col-md-4 mb-3">
             <div class="card bg-dark text-white border-info p-3 text-center shadow">
-                <h6 class="text-uppercase text-info">Total de Sensores</h6>
-                <h2 class="display-4">{{ sensores|length }}</h2>
+                <h6 class="text-uppercase text-info small fw-bold">Total de Sensores</h6>
+                <h2 class="display-4 fw-bold">{{ total_sensores }}</h2>
             </div>
         </div>
 
         <div class="col-md-4 mb-3">
             <div class="card bg-dark text-white border-success p-3 text-center shadow">
-                <h6 class="text-uppercase text-success">Sensores Ativos</h6>
-                <h2 class="display-4">{{ sensores_ativos }}</h2>
+                <h6 class="text-uppercase text-success small fw-bold">Sensores Ativos</h6>
+                <h2 class="display-4 fw-bold">{{ sensores_ativos }}</h2>
             </div>
         </div>
 
         <div class="col-md-4 mb-3">
             <div class="card bg-dark text-white border-danger p-3 text-center shadow">
-                <h6 class="text-uppercase text-danger">Sensores Inativos</h6>
-                <h2 class="display-4">{{ sensores_inativos }}</h2>
+                <h6 class="text-uppercase text-danger small fw-bold">Sensores Inativos</h6>
+                <h2 class="display-4 fw-bold">{{ sensores_inativos }}</h2>
             </div>
         </div>
     </div>
 
     <div class="row mt-4">
         <div class="col-12">
-            <div class="card bg-dark text-white p-4 shadow">
-                <h4>Monitoramento de Temperatura (Média)</h4>
-                <div id="chart-iot"></div>
+            <div class="card bg-dark text-white p-4 shadow border-secondary">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="mb-0 text-info">Monitoramento de Temperatura (Média)</h4>
+                    <span class="badge bg-secondary">Tempo Real</span>
+                </div>
+                {% if total_sensores > 0 %}
+                    <div id="chart-iot" style="min-height: 350px;"></div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Aguardando dados de sensores para gerar gráficos...</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
 
     <div class="mt-5 mb-5">
-        <h4>Sensores Detalhados</h4>
+        <div class="d-flex justify-content-between align-items-end mb-3">
+            <h4 class="text-white">Sensores Detalhados</h4>
+            {% if total_sensores > 0 %}
+            <a href="{% url 'sensores' %}" class="text-info text-decoration-none small">Ver todos <i class="fas fa-arrow-right ms-1"></i></a>
+            {% endif %}
+        </div>
+        
         <div class="table-responsive">
-            <table class="table table-dark table-hover mt-3">
+            <table class="table table-dark table-hover align-middle border-secondary">
                 <thead class="table-secondary text-dark">
                     <tr>
                         <th>Nome</th>
@@ -60,23 +101,24 @@
                 <tbody>
                     {% for s in sensores %}
                     <tr>
-                        <td class="fw-bold">{{ s.nome }}</td>
-                        <td>{{ s.tipo }}</td>
+                        <td class="fw-bold text-info">{{ s.nome }}</td>
+                        <td><span class="badge border border-light">{{ s.tipo_sensor }}</span></td>
                         <td>{{ s.unidade.nome }}</td>
                         <td>
                             {% if s.ativo %}
-                                <span class="badge bg-success">Ativo</span>
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success">Ativo</span>
                             {% else %}
-                                <span class="badge bg-danger">Inativo</span>
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger">Inativo</span>
                             {% endif %}
                         </td>
-                        <td class="text-info">{{ s.temperatura|default:"--" }} °C</td>
-                        <td>{{ s.data_instalacao|date:"d/m/Y" }}</td>
+                        <td class="fw-bold">{{ s.temperatura|default:"0.0" }} °C</td>
+                        <td class="text-muted small">{{ s.data_instalacao|date:"d/m/Y" }}</td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center text-muted">
-                            Nenhum sensor cadastrado. Vá ao Admin e adicione alguns!
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="fas fa-microchip fa-2x mb-3 d-block"></i>
+                            Nenhum sensor encontrado. Comece cadastrando uma unidade e depois seus sensores.
                         </td>
                     </tr>
                     {% endfor %}
@@ -84,15 +126,15 @@
             </table>
         </div>
     </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
+    {% if total_sensores > 0 %}
     var options = {
         series: [{
             name: 'Temperatura',
-            data: [21, 23, 22, 27, 25, 29, 26] // Exemplo inicial, depois integraremos com o banco
+            data: [21, 23, 22, 27, 25, 29, 26] 
         }],
         chart: {
             height: 350,
@@ -101,12 +143,12 @@
             toolbar: { show: false }
         },
         colors: ['#0dcaf0'],
-        stroke: { curve: 'smooth' },
+        stroke: { curve: 'smooth', width: 3 },
         fill: {
             type: 'gradient',
-            gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.2 }
+            gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.1 }
         },
-        grid: { borderColor: '#444' },
+        grid: { borderColor: '#333' },
         xaxis: {
             categories: ['10:00', '10:10', '10:20', '10:30', '10:40', '10:50', '11:00']
         },
@@ -115,5 +157,6 @@
 
     var chart = new ApexCharts(document.querySelector("#chart-iot"), options);
     chart.render();
+    {% endif %}
 </script>
 {% endblock %}

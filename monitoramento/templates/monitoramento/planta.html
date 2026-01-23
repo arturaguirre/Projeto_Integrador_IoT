@@ -1,10 +1,108 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Página em construção</title>
-</head>
-<body>
-    <h1>Em construção 🚧</h1>
-    <a href="{% url 'dashboard' %}">Voltar</a>
-</body>
-</html>
+{% extends 'monitoramento/base.html' %}
+{% load static %}
+
+{% block title %}Planta Baixa - Boreas IoT{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
+        <div>
+            <h2 class="text-white mb-0"><i class="fas fa-map me-2 text-info"></i>Planta Baixa Interativa</h2>
+            <p class="text-muted small mb-0">Unidade: <span class="text-info">{{ unidade_nome|default:"Matriz Principal" }}</span></p>
+        </div>
+        
+        <div class="d-flex gap-2">
+            {% if user.is_superuser or user.perfil.cargo|lower == 'gestor' %}
+                <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                    <option>Alterar Unidade/Planta...</option>
+                    {% for u in unidades %}
+                        <option value="{{ u.id }}">{{ u.nome }}</option>
+                    {% endfor %}
+                </select>
+                
+                <button class="btn btn-outline-info btn-sm">
+                    <i class="fas fa-download me-1"></i> Baixar Planta (PDF)
+                </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-9 mb-4">
+            <div class="card bg-dark border-secondary shadow position-relative overflow-hidden" id="planta-container">
+                <img src="{% static 'images/planta_ficticia.jpg' %}" class="img-fluid w-100" alt="Planta da Empresa" style="opacity: 0.8; min-height: 400px; background-color: #1a1a1a;">
+
+                <div class="sensor-point bg-success" style="top: 45%; left: 15%;" 
+                     data-bs-toggle="tooltip" data-bs-placement="top" title="Sensor 01: 22°C (Área Técnica)">
+                </div>
+
+                <div class="sensor-point bg-info" style="top: 75%; left: 45%;" 
+                     data-bs-toggle="tooltip" data-bs-placement="top" title="Sensor 02: 24°C (Escritório)">
+                </div>
+
+                <div class="sensor-point bg-danger pulse-animation" style="top: 15%; left: 85%;" 
+                     data-bs-toggle="tooltip" data-bs-placement="top" title="Sensor 03: 29°C (Crítico!)">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="card bg-dark border-secondary shadow p-3">
+                <h5 class="text-white mb-3">Legenda</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><span class="badge bg-success me-2" style="width: 15px; height: 15px; display: inline-block;">&nbsp;</span> Operação Normal</li>
+                    <li class="mb-2"><span class="badge bg-info me-2" style="width: 15px; height: 15px; display: inline-block;">&nbsp;</span> Informativo</li>
+                    <li class="mb-2"><span class="badge bg-danger me-2" style="width: 15px; height: 15px; display: inline-block;">&nbsp;</span> Alerta de Temperatura</li>
+                </ul>
+                <hr class="border-secondary">
+                <p class="text-muted small">Passe o mouse sobre os pontos para ver detalhes em tempo real.</p>
+                <div class="alert alert-info py-2" style="font-size: 0.75rem;">
+                    <i class="fas fa-info-circle me-1"></i> Esta é uma visão estática. Em breve, os pontos serão carregados conforme a unidade selecionada.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #planta-container {
+        cursor: crosshair;
+        background-color: #000;
+    }
+
+    .sensor-point {
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid white;
+        cursor: pointer;
+        transition: transform 0.2s;
+        z-index: 10;
+    }
+
+    .sensor-point:hover {
+        transform: scale(1.5);
+    }
+
+    .pulse-animation {
+        box-shadow: 0 0 0 rgba(220, 53, 69, 0.4);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+        70% { box-shadow: 0 0 0 15px rgba(220, 53, 69, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    })
+</script>
+{% endblock %}

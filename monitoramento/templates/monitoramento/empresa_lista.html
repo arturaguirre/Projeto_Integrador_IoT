@@ -1,5 +1,7 @@
 {% extends 'monitoramento/base.html' %}
 
+{% block title %}Gerenciar Empresas - Boreas IoT{% endblock %}
+
 {% block content %}
 <style>
     /* Efeito de zoom suave no card */
@@ -59,6 +61,12 @@
                         <p class="mb-1 text-truncate"><i class="fas fa-envelope me-2 text-info"></i>{{ empresa.email }}</p>
                         <p class="mb-1"><i class="fas fa-phone me-2 text-info"></i>{{ empresa.telefone }}</p>
                     </div>
+
+                    <div class="mt-3">
+                        <a href="{% url 'cadastro_usuario_empresa' empresa.id %}" class="btn btn-sm btn-outline-info w-100">
+                            <i class="fas fa-user-plus me-1"></i> Adicionar Gestor/Equipe
+                        </a>
+                    </div>
                 </div>
 
                 <div class="card-footer border-secondary bg-black bg-opacity-25 d-flex justify-content-around py-3">
@@ -68,7 +76,7 @@
                     
                     <a href="{% url 'excluir_empresa' empresa.id %}" 
                        class="btn btn-sm btn-outline-danger px-3"
-                       onclick="return confirm('Tem certeza que deseja excluir a empresa {{ empresa.nome }}?')">
+                       onclick="return confirm('Tem certeza que deseja excluir a empresa {{ empresa.nome }}? Todos os usuários e sensores vinculados podem ser afetados.')">
                         <i class="fas fa-trash"></i>
                     </a>
                 </div>
@@ -79,7 +87,7 @@
             <div class="card bg-dark border-secondary border-dashed p-5" style="border-style: dashed !important;">
                 <i class="fas fa-city fa-3x text-muted mb-3"></i>
                 <h4 class="text-muted">Nenhuma empresa encontrada</h4>
-                <p class="text-muted">Clique em "Nova Matriz" para começar.</p>
+                <p class="text-muted">Clique em "Nova Matriz" para começar o setup do sistema.</p>
             </div>
         </div>
         {% endfor %}

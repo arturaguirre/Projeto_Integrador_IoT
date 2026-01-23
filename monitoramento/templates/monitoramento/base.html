@@ -18,7 +18,6 @@
             min-height: 100vh;
         }
 
-        /* NAVBAR CUSTOMIZADA */
         nav {
             background: #111;
             padding: 10px 30px;
@@ -36,6 +35,7 @@
             font-size: 22px;
             color: #0dcaf0; 
             letter-spacing: 1px;
+            text-decoration: none;
         }
 
         nav .nav-links {
@@ -60,7 +60,6 @@
             border-radius: 5px;
         }
 
-        /* LINK ATIVO */
         nav a.active, nav .dropdown-toggle.active {
             color: #fff !important;
             font-weight: bold;
@@ -68,7 +67,6 @@
             background: rgba(13, 202, 240, 0.1);
         }
 
-        /* ESTILO DROPDOWN DARK */
         .dropdown-menu-dark {
             background-color: #1a1a1a;
             border: 1px solid #333;
@@ -94,13 +92,11 @@
             padding: 30px;
         }
 
-        /* Alertas */
         .alert {
             border-radius: 10px;
             font-size: 14px;
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f0f0f; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
@@ -110,12 +106,12 @@
 <body>
 
 <nav>
-    <div class="logo">
+    <a href="{% url 'home' %}" class="logo">
         <i class="fas fa-wind me-2"></i>Boreas IoT
-    </div>
+    </a>
     
     <div class="nav-links">
-        <a href="{% url 'dashboard' %}" 
+        <a href="{% url 'home' %}" 
            class="{% if request.path == '/' or request.path == '/dashboard/' %}active{% endif %}">
            <i class="fas fa-chart-line me-1"></i> Painel
         </a>
@@ -135,24 +131,32 @@
            <i class="fas fa-map me-1"></i> Planta
         </a>
 
-        <div class="dropdown d-inline">
-            <a class="dropdown-toggle {% if 'administrativo' in request.path or 'cadastro' in request.path %}active{% endif %}" 
-               href="#" role="button" id="dropdownAdmin" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-user-shield me-1"></i> Administrativo
-            </a>
-            <ul class="dropdown-menu dropdown-menu-dark shadow-lg" aria-labelledby="dropdownAdmin">
-                <li>
-                    <a class="dropdown-item" href="{% url 'listar_empresas' %}">
-                        <i class="fas fa-city me-2"></i>Gerenciar Empresas
-                    </a>
-                </li>
-                <li>
-                    <a class="dropdown-item" href="{% url 'gerenciar_equipe' %}">
-                        <i class="fas fa-users-cog me-2"></i>Gerenciar Equipe
-                    </a>
-                </li>
-            </ul>
-        </div>
+        {% if user.is_authenticated %}
+            {# VERIFICAÇÃO DE GESTOR OU SUPERUSER #}
+            {% if user.is_superuser or 'gestor' in user.perfil.cargo|lower or 'gestora' in user.perfil.cargo|lower %}
+            <div class="dropdown d-inline">
+                <a class="dropdown-toggle {% if 'administrativo' in request.path or 'empresa' in request.path or 'equipe' in request.path %}active{% endif %}" 
+                    href="#" role="button" id="dropdownAdmin" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-shield me-1"></i> Administrativo
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark shadow-lg" aria-labelledby="dropdownAdmin">
+                    
+                    {# Gestores agora podem ver a opção de Gerenciar a própria Empresa #}
+                    <li>
+                        <a class="dropdown-item" href="{% url 'listar_empresas' %}">
+                            <i class="fas fa-city me-2"></i>Gerenciar Empresa
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="dropdown-item" href="{% url 'gerenciar_equipe' %}">
+                            <i class="fas fa-users-cog me-2"></i>Gerenciar Equipe
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            {% endif %}
+        {% endif %}
 
         <a href="{% url 'logout' %}" class="text-danger border-0 ms-4">
             <i class="fas fa-sign-out-alt me-1"></i> Sair
@@ -164,7 +168,7 @@
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissible fade show bg-dark text-white border-{{ message.tags }} shadow">
-                <i class="fas {% if message.tags == 'success' %}fa-check-circle text-success{% else %}fa-exclamation-triangle text-warning{% endif %} me-2"></i>
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle text-success{% elif message.tags == 'error' %}fa-times-circle text-danger{% else %}fa-exclamation-triangle text-warning{% endif %} me-2"></i>
                 {{ message }}
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -177,6 +181,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // Fecha os alertas automaticamente após 5 segundos
     setTimeout(function() {
         let alerts = document.querySelectorAll('.alert');
         alerts.forEach(function(alert) {
