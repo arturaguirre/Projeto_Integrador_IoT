@@ -8,167 +8,134 @@
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{% static 'dashboard.css' %}">
 
     <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f0f0f;
-            color: #fff;
-            min-height: 100vh;
-        }
-
+        /* --- AJUSTE DEFINITIVO DA NAVBAR --- */
         nav {
-            background: #111;
-            padding: 10px 30px;
+            background: var(--bg-dark);
+            padding: 0 30px; /* Padding zero no topo/fundo para alinhar por altura */
             display: flex;
-            align-items: center;
+            align-items: center; /* Centraliza tudo verticalmente na linha */
             justify-content: space-between;
-            border-bottom: 1px solid #222;
+            border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
             z-index: 1000;
+            height: 70px; /* Altura fixa para não ter erro */
         }
 
-        nav .logo {
-            font-weight: bold;
-            font-size: 22px;
-            color: #0dcaf0; 
-            letter-spacing: 1px;
+        /* Container da Logo - Removido fundo cinza e centralizado */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-decoration: none;
+            transition: transform 0.3s ease;
+            background: transparent !important; /* Mata o fundo cinza que aparecia no print */
+            height: 100%;
+            padding: 0;
+            margin: 0;
         }
 
-        nav .nav-links {
+        .logo-container:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-img {
+            height: 42px !important; /* Tamanho ideal para a logo horizontal */
+            width: auto !important;
+            display: block;
+            object-fit: contain;
+            filter: drop-shadow(0 0 5px rgba(0, 224, 255, 0.1)); /* Brilho sutil ciano */
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: 100%;
+        }
+
+        /* Ajuste para alinhar os botões "tortos" com a logo */
+        .nav-tab-boreas {
+            margin: 0; 
+        }
+
+        .nav-link-simple {
+            color: var(--text-muted) !important;
+            font-size: 14px;
+            padding: 8px 15px;
+            transition: 0.3s;
+            text-decoration: none;
             display: flex;
             align-items: center;
         }
-
-        nav a, nav .dropdown-toggle {
-            color: #ccc !important;
-            text-decoration: none;
-            margin-left: 10px;
-            font-size: 14px;
-            padding: 8px 15px;
-            transition: all 0.3s ease;
-            border-bottom: 2px solid transparent;
-            cursor: pointer;
-        }
-
-        nav a:hover, nav .dropdown-toggle:hover {
-            color: #fff !important;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 5px;
-        }
-
-        nav a.active, nav .dropdown-toggle.active {
-            color: #fff !important;
-            font-weight: bold;
-            border-bottom: 2px solid #0dcaf0;
-            background: rgba(13, 202, 240, 0.1);
-        }
-
-        .dropdown-menu-dark {
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            margin-top: 10px;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .dropdown-item {
-            font-size: 14px;
-            padding: 12px 20px;
-            color: #ccc !important;
-            transition: all 0.2s;
-        }
-
-        .dropdown-item:hover {
-            background-color: #0dcaf0;
-            color: #000 !important;
-            padding-left: 25px;
+        
+        .nav-link-simple:hover {
+            color: var(--accent-cyan) !important;
         }
 
         .container-main {
-            padding: 30px;
+            padding: 40px 20px;
+            min-height: calc(100vh - 70px);
         }
 
-        .alert {
-            border-radius: 10px;
-            font-size: 14px;
+        .dropdown-menu-dark {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
         }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0f0f0f; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #444; }
     </style>
 </head>
 <body>
 
 <nav>
-    <a href="{% url 'home' %}" class="logo">
-        <i class="fas fa-wind me-2"></i>Boreas IoT
+    <a href="{% url 'home' %}" class="logo-container">
+        <img src="{% static 'images/Boreas_logo.png' %}" alt="Boreas IoT" class="logo-img">
     </a>
     
     <div class="nav-links">
-        <a href="{% url 'home' %}" 
-           class="{% if request.path == '/' or request.path == '/dashboard/' %}active{% endif %}">
-           <i class="fas fa-chart-line me-1"></i> Painel
+        <a href="{% url 'home' %}" class="nav-tab-boreas {% if request.path == '/' or '/dashboard/' in request.path %}active{% endif %}">
+            <span>Painel</span>
         </a>
 
-        <a href="{% url 'sensores' %}" 
-           class="{% if 'sensores' in request.path %}active{% endif %}">
-           <i class="fas fa-microchip me-1"></i> Sensores
+        <a href="{% url 'sensores' %}" class="nav-tab-boreas {% if 'sensores' in request.path %}active{% endif %}">
+            <span>Sensores</span>
         </a>
 
-        <a href="{% url 'unidades' %}" 
-           class="{% if 'unidades' in request.path %}active{% endif %}">
-           <i class="fas fa-industry me-1"></i> Unidades
+        <a href="{% url 'unidades' %}" class="nav-tab-boreas {% if 'unidades' in request.path %}active{% endif %}">
+            <span>Unidades</span>
         </a>
 
-        <a href="{% url 'planta' %}" 
-           class="{% if '/planta/' in request.path %}active{% endif %}">
-           <i class="fas fa-map me-1"></i> Planta
+        <a href="{% url 'planta' %}" class="nav-tab-boreas {% if 'planta' in request.path %}active{% endif %}">
+            <span>Planta</span>
         </a>
 
         {% if user.is_authenticated %}
-            {# VERIFICAÇÃO DE GESTOR OU SUPERUSER #}
-            {% if user.is_superuser or 'gestor' in user.perfil.cargo|lower or 'gestora' in user.perfil.cargo|lower %}
+            {% if user.is_superuser or 'gestor' in user.perfil.cargo|lower %}
             <div class="dropdown d-inline">
-                <a class="dropdown-toggle {% if 'administrativo' in request.path or 'empresa' in request.path or 'equipe' in request.path %}active{% endif %}" 
-                    href="#" role="button" id="dropdownAdmin" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-user-shield me-1"></i> Administrativo
+                <a class="nav-link-simple dropdown-toggle" href="#" id="dropdownAdmin" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-shield me-1"></i> Admin
                 </a>
                 <ul class="dropdown-menu dropdown-menu-dark shadow-lg" aria-labelledby="dropdownAdmin">
-                    
-                    {# Gestores agora podem ver a opção de Gerenciar a própria Empresa #}
-                    <li>
-                        <a class="dropdown-item" href="{% url 'listar_empresas' %}">
-                            <i class="fas fa-city me-2"></i>Gerenciar Empresa
-                        </a>
-                    </li>
-
-                    <li>
-                        <a class="dropdown-item" href="{% url 'gerenciar_equipe' %}">
-                            <i class="fas fa-users-cog me-2"></i>Gerenciar Equipe
-                        </a>
-                    </li>
+                    <li><a class="dropdown-item" href="{% url 'listar_empresas' %}">Empresa</a></li>
+                    <li><a class="dropdown-item" href="{% url 'gerenciar_equipe' %}">Equipe</a></li>
                 </ul>
             </div>
             {% endif %}
+            
+            <a href="{% url 'logout' %}" class="nav-link-simple text-danger">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
         {% endif %}
-
-        <a href="{% url 'logout' %}" class="text-danger border-0 ms-4">
-            <i class="fas fa-sign-out-alt me-1"></i> Sair
-        </a>
     </div>
 </nav>
 
-<div class="container container-main">
+<div class="container-main">
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show bg-dark text-white border-{{ message.tags }} shadow">
-                <i class="fas {% if message.tags == 'success' %}fa-check-circle text-success{% elif message.tags == 'error' %}fa-times-circle text-danger{% else %}fa-exclamation-triangle text-warning{% endif %} me-2"></i>
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show bg-dark text-white border-0 shadow-lg mb-4">
                 {{ message }}
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -181,7 +148,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // Fecha os alertas automaticamente após 5 segundos
     setTimeout(function() {
         let alerts = document.querySelectorAll('.alert');
         alerts.forEach(function(alert) {

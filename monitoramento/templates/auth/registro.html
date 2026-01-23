@@ -7,39 +7,97 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --bg-dark: #16181d;
+            --card-bg: #22252b;
+            --accent-cyan: #00e0ff;
+            --text-muted: #cbd5e1; /* Tom Sky Blue para leitura clara */
+        }
+
         body {
-            background-color: #0f1113;
+            background-color: var(--bg-dark);
             background-image: radial-gradient(circle at 50% 50%, #1a1d20 0%, #0f1113 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             padding: 40px 0;
+            font-family: 'Segoe UI', sans-serif;
         }
+
         .register-card {
-            background-color: #1a1d20;
+            background-color: var(--card-bg);
             border: 1px solid #2d3238;
             border-radius: 15px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.5);
         }
+
+        /* --- CORREÇÃO DE LEGIBILIDADE --- */
+        .form-label {
+            color: var(--text-muted) !important;
+            font-weight: 600;
+            opacity: 1 !important;
+        }
+
+        .text-muted-boreas {
+            color: var(--text-muted) !important;
+            opacity: 1 !important;
+        }
+
         .form-control {
             background-color: #121416;
             border-color: #495057;
             color: white;
         }
+
         .form-control:focus {
             background-color: #121416;
             color: white;
-            border-color: #0dcaf0;
-            box-shadow: 0 0 0 0.25rem rgba(13, 202, 240, 0.15);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 0.25rem rgba(0, 224, 255, 0.15);
         }
+
         .section-title {
-            font-size: 0.9rem;
-            color: #0dcaf0;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
             border-bottom: 1px solid #2d3238;
-            padding-bottom: 5px;
+            padding-bottom: 8px;
             margin-bottom: 20px;
+        }
+
+        /* --- BOTÃO PRINCIPAL --- */
+        .btn-info {
+            background-color: var(--accent-cyan);
+            border: none;
+            color: #16181d; /* Texto escuro para contraste */
+            font-weight: 800;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-info:hover {
+            background-color: #00c8e6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 224, 255, 0.3);
+        }
+
+        /* Ajuste do link de voltar */
+        .back-to-login {
+            color: var(--text-muted) !important;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+
+        .back-to-login span {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .back-to-login:hover {
+            filter: brightness(1.2);
         }
     </style>
 </head>
@@ -47,9 +105,9 @@
 <div class="container d-flex justify-content-center">
     <div class="card register-card text-white p-4" style="width: 100%; max-width: 600px;">
         <div class="text-center mb-4">
-            <i class="fas fa-wind fa-2x text-info mb-2"></i>
-            <h3 class="fw-bold">Comece agora no <span class="text-info">Boreas</span></h3>
-            <p class="text-muted small">Configure sua matriz e conta de gestor</p>
+            <i class="fas fa-wind fa-2x mb-2" style="color: var(--accent-cyan);"></i>
+            <h3 class="fw-bold">Comece agora no <span style="color: var(--accent-cyan);">Boreas</span></h3>
+            <p class="text-muted-boreas small">Configure sua matriz e conta de gestor</p>
         </div>
 
         <form method="post">
@@ -58,38 +116,40 @@
             <div class="section-title"><i class="fas fa-city me-2"></i>Dados da Empresa Matriz</div>
             <div class="row">
                 <div class="col-md-7 mb-3">
-                    <label class="form-label small text-muted">Nome da Empresa</label>
+                    <label class="form-label small">Nome da Empresa</label>
                     <input type="text" name="nome_empresa" class="form-control form-control-sm" placeholder="Ex: Friboi LTDA" required>
                 </div>
                 <div class="col-md-5 mb-3">
-                    <label class="form-label small text-muted">CNPJ</label>
+                    <label class="form-label small">CNPJ</label>
                     <input type="text" name="cnpj" class="form-control form-control-sm" placeholder="00.000.000/0001-00">
                 </div>
             </div>
 
             <div class="section-title mt-3"><i class="fas fa-user-tie me-2"></i>Sua Conta de Gestor</div>
             <div class="mb-3">
-                <label class="form-label small text-muted">Nome de Usuário</label>
-                <input type="text" name="username" class="form-control form-control-sm" required>
+                <label class="form-label small">Nome de Usuário</label>
+                <input type="text" name="username" class="form-control form-control-sm" placeholder="Ex: eduarda_leal" required>
             </div>
             <div class="mb-3">
-                <label class="form-label small text-muted">E-mail Corporativo</label>
-                <input type="email" name="email" class="form-control form-control-sm" required>
+                <label class="form-label small">E-mail Corporativo</label>
+                <input type="email" name="email" class="form-control form-control-sm" placeholder="contato@empresa.com" required>
             </div>
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label small text-muted">Senha</label>
+                    <label class="form-label small">Senha</label>
                     <input type="password" name="password" class="form-control form-control-sm" required>
                 </div>
                 <div class="col-md-6 mb-4">
-                    <label class="form-label small text-muted">Confirmar Senha</label>
+                    <label class="form-label small">Confirmar Senha</label>
                     <input type="password" name="password_confirm" class="form-control form-control-sm" required>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-info w-100 fw-bold py-2 mb-3">FINALIZAR E ACESSAR PAINEL</button>
+            <button type="submit" class="btn btn-info w-100 py-2 mb-3">FINALIZAR E ACESSAR PAINEL</button>
             <div class="text-center">
-                <a href="{% url 'login' %}" class="text-muted small text-decoration-none">Já tem conta? <span class="text-info">Voltar ao login</span></a>
+                <a href="{% url 'login' %}" class="back-to-login">
+                    Já tem conta? <span>Voltar ao login</span>
+                </a>
             </div>
         </form>
     </div>

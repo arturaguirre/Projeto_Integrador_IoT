@@ -1,93 +1,160 @@
-/* Configurações Gerais e Variáveis */
+/* =========================================
+   BOREAS IOT - SYSTEM DESIGN SYSTEM (FINAL)
+   ========================================= */
+
 :root {
-    --bg-dark: #0f1113;
-    --card-bg: #1a1d20;
-    --accent-info: #0dcaf0;
-    --border-color: #2d3238;
-    --text-muted: #adb5bd;
+    /* --- ESTRUTURA --- */
+    --bg-dark: #16181d;       
+    --card-bg: #22252b;       
+    --border-color: #2d3238;  
+    
+    /* --- TEXTOS (AJUSTE DE CONTRASTE) --- */
+    --text-main: #ffffff;
+    --text-muted: #cbd5e1;    
+
+    /* --- MARCA (CORES SÓLIDAS) --- */
+    --accent-cyan: #00e0ff;   
+    --accent-wine: #8b1a3d;   
+    --accent-dark-teal: #1e3a40; 
+    
+    --table-hover: rgba(255, 255, 255, 0.03);
+    --tab-inactive: #343a40;  
 }
 
+/* --- BASE --- */
 body {
     background-color: var(--bg-dark);
-    color: #ffffff;
+    color: var(--text-main);
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden; 
 }
 
-/* Layout do Container */
-.dashboard-container {
-    padding: 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
+/* --- CORREÇÃO DEFINITIVA DE LEITURA --- */
+.text-muted, 
+small, 
+.card p, 
+.card span:not(.value-display),
+.legend-item, 
+.subtitle-boreas,
+p.text-secondary,
+.planta-info,
+#legenda-planta {
+    color: var(--text-muted) !important;
+    opacity: 1 !important;
 }
 
-/* Sistema de Cards */
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
+a { 
+    text-decoration: none;
+    color: inherit; 
 }
 
+/* --- AJUSTE DA LOGO (ALINHADA À ESQUERDA - IGUAL GESTÃO DE EQUIPE) --- */
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Força o alinhamento à esquerda */
+    text-decoration: none;
+    background: transparent !important; /* Remove o fundo cinza indesejado */
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.logo-img {
+    height: 40px !important; /* Altura equilibrada para a barra superior */
+    width: auto !important;
+    display: block;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(0, 224, 255, 0.15)); /* Brilho sutil no ciano */
+}
+
+/* --- NAVEGAÇÃO (ESTILO CANVA) --- */
+.boreas-nav-container {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 2rem;
+    padding-top: 1rem;
+}
+
+.nav-tab-boreas {
+    background-color: var(--tab-inactive);
+    color: var(--text-muted);
+    padding: 10px 35px;
+    font-weight: 700;
+    text-transform: capitalize;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transform: skew(-20deg);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.nav-tab-boreas span {
+    display: block;
+    transform: skew(20deg);
+}
+
+.nav-tab-boreas:hover {
+    background-color: #454b54;
+    color: var(--text-main);
+}
+
+.nav-tab-boreas.active {
+    background-color: var(--accent-wine);
+    color: white;
+    box-shadow: 0 4px 15px rgba(139, 26, 61, 0.4);
+}
+
+/* --- COMPONENTES --- */
 .card {
     background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05); 
+    border-radius: 16px;
     padding: 1.5rem;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .card:hover {
     transform: translateY(-5px);
-    border-color: var(--accent-info);
 }
 
 .card h3 {
-    margin: 0 0 0.75rem 0;
+    margin: 0 0 1rem 0;
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
 }
 
-.card span {
-    font-size: 2rem;
+.card span.value-display {
+    font-size: 2.5rem;
     font-weight: 700;
-    color: #fff;
+    color: var(--text-main);
     display: block;
 }
 
-/* Container de Tabelas */
+/* --- TABELAS --- */
 .table-container {
     background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-}
-
-/* Estilização da Tabela */
-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-th, td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 th {
-    color: var(--accent-info);
+    color: var(--accent-cyan);
     font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: 1.5px;
 }
 
 td {
@@ -95,25 +162,12 @@ td {
     color: #e9ecef;
 }
 
-tr:last-child td {
-    border-bottom: none;
-}
+/* --- SCROLLBAR --- */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: #3a3f4b; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
 
-tr:hover td {
-    background-color: rgba(255, 255, 255, 0.02);
-}
-
-/* Custom Scrollbar (para dar o toque final) */
-::-webkit-scrollbar {
-    width: 8px;
-}
-::-webkit-scrollbar-track {
-    background: var(--bg-dark);
-}
-::-webkit-scrollbar-thumb {
-    background: #333;
-    border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-info);
-}
+/* --- UTILITÁRIOS --- */
+.text-cyan { color: var(--accent-cyan) !important; }
+.text-wine { color: var(--accent-wine) !important; }
