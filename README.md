@@ -2,7 +2,7 @@
 
 # Boreas IOT
 
-**Plataforma Full Stack para monitoramento térmico industrial em tempo real, integrando telemetria de sensores com uma interface de alta performance.**
+**Sistema de monitoramento térmico industrial desenvolvido como solução Full Stack para integração de telemetria de sensores e visualização de dados em tempo real.**
 
 </div>
 
