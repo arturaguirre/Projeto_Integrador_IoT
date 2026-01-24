@@ -10,7 +10,7 @@
             <h2 class="text-white mb-0"><i class="fas fa-map me-2 text-info"></i>Planta Baixa Interativa</h2>
             <p class="text-muted small mb-0">Unidade: <span class="text-info">{{ unidade_nome|default:"Matriz Principal" }}</span></p>
         </div>
-        
+
         <div class="d-flex gap-2">
             {% if user.is_superuser or user.perfil.cargo|lower == 'gestor' %}
                 <select class="form-select form-select-sm bg-dark text-white border-secondary">
@@ -19,7 +19,7 @@
                         <option value="{{ u.id }}">{{ u.nome }}</option>
                     {% endfor %}
                 </select>
-                
+
                 <button class="btn btn-outline-info btn-sm">
                     <i class="fas fa-download me-1"></i> Baixar Planta (PDF)
                 </button>
@@ -32,15 +32,15 @@
             <div class="card bg-dark border-secondary shadow position-relative overflow-hidden" id="planta-container">
                 <img src="{% static 'images/planta_ficticia.jpg' %}" class="img-fluid w-100" alt="Planta da Empresa" style="opacity: 0.8; min-height: 400px; background-color: #1a1a1a;">
 
-                <div class="sensor-point bg-success" style="top: 45%; left: 15%;" 
+                <div class="sensor-point bg-success" style="top: 45%; left: 15%;"
                      data-bs-toggle="tooltip" data-bs-placement="top" title="Sensor 01: 22°C (Área Técnica)">
                 </div>
 
-                <div class="sensor-point bg-info" style="top: 75%; left: 45%;" 
+                <div class="sensor-point bg-info" style="top: 75%; left: 45%;"
                      data-bs-toggle="tooltip" data-bs-placement="top" title="Sensor 02: 24°C (Escritório)">
                 </div>
 
-                <div class="sensor-point bg-danger pulse-animation" style="top: 15%; left: 85%;" 
+                <div class="sensor-point bg-danger pulse-animation" style="top: 15%; left: 85%;"
                      data-bs-toggle="tooltip" data-bs-placement="top" title="Sensor 03: 29°C (Crítico!)">
                 </div>
             </div>
@@ -94,6 +94,14 @@
         0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
         70% { box-shadow: 0 0 0 15px rgba(220, 53, 69, 0); }
         100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+    }
+
+    .col-lg-3 .card ul li {
+        color: #ffffff !important; /* Texto branco nos itens da lista */
+    }
+
+    .col-lg-3 .card .text-muted {
+        color: #d1d1d1 !important; /* Cinza claro para o texto de instrução */
     }
 </style>
 

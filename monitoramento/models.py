@@ -2,12 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 import os
 
-# ======================
-# MODELO: EMPRESA
-# ======================
 class Empresa(models.Model):
     nome = models.CharField(max_length=100)
-    # Ajustado para permitir cadastro rápido (via registro_externo)
     cnpj = models.CharField(max_length=18, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     telefone = models.CharField(max_length=20, null=True, blank=True)
@@ -18,15 +14,11 @@ class Empresa(models.Model):
         return self.nome
 
     def delete(self, *args, **kwargs):
-        # Remove o arquivo físico da logo quando a empresa é deletada
         if self.logo:
             if os.path.isfile(self.logo.path):
                 os.remove(self.logo.path)
         super().delete(*args, **kwargs)
 
-# ======================
-# MODELO: UNIDADE
-# ======================
 class Unidade(models.Model):
     nome = models.CharField(max_length=100)
     cidade = models.CharField(max_length=100)
@@ -36,17 +28,12 @@ class Unidade(models.Model):
     def __str__(self):
         return f"{self.nome} ({self.empresa.nome})"
 
-# ======================
-# MODELO: SENSOR
-# ======================
 class Sensor(models.Model):
     nome = models.CharField(max_length=100)
     tipo_sensor = models.CharField(max_length=50, default="Geral") 
     unidade = models.ForeignKey(Unidade, on_delete=models.CASCADE, related_name='sensores')
     ativo = models.BooleanField(default=True)
     data_instalacao = models.DateTimeField(auto_now_add=True)
-    
-    # Telemetria (Campos de cache para o Dashboard)
     temperatura = models.FloatField(null=True, blank=True, default=0.0)
     umidade = models.FloatField(null=True, blank=True, default=0.0)
     gas_nh3 = models.FloatField(null=True, blank=True, default=0.0)
@@ -57,9 +44,6 @@ class Sensor(models.Model):
     class Meta:
         verbose_name_plural = "Sensores"
 
-# ======================
-# MODELO: PERFIL (USUÁRIO)
-# ======================
 class Perfil(models.Model):
     CARGOS = [
         ("gestor", "Gestor (Administrador - Full Access)"),

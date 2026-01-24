@@ -7,21 +7,16 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db import transaction
 
-# Importação dos modelos e formulários
 from .forms import EmpresaForm, UnidadeForm, SensorForm, RegistroUsuarioForm
 from .models import Sensor, Perfil, Unidade, Empresa
 from .mongo import collection
-
-# ======================
-# AUTENTICAÇÃO
-# ======================
 
 def login_view(request):
     if request.user.is_authenticated:
         return redirect("home")
 
     if request.method == "POST":
-        username = request.POST.get("username") 
+        username = request.POST.get("username")
         password = request.POST.get("password")
         user = authenticate(request, username=username, password=password)
 
@@ -35,41 +30,32 @@ def login_view(request):
 
     return render(request, "auth/login.html")
 
+
 def logout_view(request):
     logout(request)
     return redirect("login")
-
-# ======================
-# DASHBOARD PRINCIPAL (ATUALIZADA)
-# ======================
 
 @login_required(login_url="/login/")
 def dashboard(request):
     sensores_query = Sensor.objects.none()
     nome_empresa = "Não identificado"
     mostrar_tutorial = False
-    
-    # Prioridade para Superuser (Vê tudo)
     if request.user.is_superuser:
         sensores_query = Sensor.objects.all()
         nome_empresa = "Administração Global (Superuser)"
     else:
         try:
-            # Filtra estritamente pela empresa vinculada ao perfil
             perfil = request.user.perfil
             empresa_do_usuario = perfil.empresa
             sensores_query = Sensor.objects.filter(unidade__empresa=empresa_do_usuario)
             nome_empresa = empresa_do_usuario.nome
-
-            # LÓGICA DE PRIMEIRO ACESSO:
-            # Se o usuário for gestor e a empresa dele ainda não tiver unidades, ativa o tutorial
             if 'gestor' in perfil.cargo.lower():
                 if not Unidade.objects.filter(empresa=empresa_do_usuario).exists():
                     mostrar_tutorial = True
 
         except Perfil.DoesNotExist:
             messages.error(request, "Seu usuário não possui um perfil vinculado.")
-    
+
     logs_recentes = []
     if collection is not None and sensores_query.exists():
         ids_sensores = list(sensores_query.values_list('id', flat=True))
@@ -87,13 +73,9 @@ def dashboard(request):
         "sensores_inativos": sensores_query.filter(ativo=False).count(),
         "nome_empresa": nome_empresa,
         "logs": logs_recentes,
-        "mostrar_tutorial": mostrar_tutorial  # Nova flag para o HTML
+        "mostrar_tutorial": mostrar_tutorial
     }
     return render(request, "monitoramento/dashboard.html", context)
-
-# ======================
-# GESTÃO DE EQUIPE
-# ======================
 
 @login_required
 def gerenciar_equipe(request):
@@ -111,16 +93,17 @@ def gerenciar_equipe(request):
                 return redirect('home')
         except Perfil.DoesNotExist:
             return redirect('home')
-            
+
     return render(request, 'monitoramento/equipe.html', {
         'equipe': equipe,
         'unidade_nome': unidade_nome
     })
 
+
 @login_required
 def excluir_usuario(request, user_id):
     user_alvo = get_object_or_404(User, id=user_id)
-    
+
     if user_alvo == request.user:
         messages.error(request, "Você não pode excluir sua própria conta.")
         return redirect('gerenciar_equipe')
@@ -131,8 +114,8 @@ def excluir_usuario(request, user_id):
     else:
         try:
             perfil_gestor = request.user.perfil
-            perfil_alvo = user_alvo.perfil 
-            
+            perfil_alvo = user_alvo.perfil
+
             if 'gestor' in perfil_gestor.cargo.lower() and perfil_gestor.empresa == perfil_alvo.empresa:
                 user_alvo.delete()
                 messages.success(request, "Colaborador removido da empresa.")
@@ -143,10 +126,6 @@ def excluir_usuario(request, user_id):
 
     return redirect('gerenciar_equipe')
 
-# ======================
-# GESTÃO DE EMPRESAS (CRUD)
-# ======================
-
 @login_required
 def listar_empresas(request):
     if request.user.is_superuser:
@@ -155,20 +134,33 @@ def listar_empresas(request):
         try:
             perfil = request.user.perfil
             if 'gestor' in perfil.cargo.lower():
-                # Gestor só vê a sua própria empresa na lista
+                # Gestor só vê a sua própria empresa (isolamento por perfil)
                 empresas = Empresa.objects.filter(id=perfil.empresa.id)
             else:
                 messages.error(request, "Acesso restrito.")
                 return redirect('home')
         except Perfil.DoesNotExist:
             return redirect('home')
-            
+
     return render(request, 'monitoramento/empresa_lista.html', {'empresas': empresas})
+
 
 @login_required
 def cadastro_empresa(request):
-    if not request.user.is_superuser:
-        messages.error(request, "Apenas administradores globais podem cadastrar novas empresas.")
+    tem_permissao = False
+
+    if request.user.is_superuser:
+        tem_permissao = True
+    else:
+        try:
+            perfil = request.user.perfil
+            if 'gestor' in perfil.cargo.lower():
+                tem_permissao = True
+        except Perfil.DoesNotExist:
+            pass
+
+    if not tem_permissao:
+        messages.error(request, "Apenas gestores e administradores podem cadastrar novas empresas.")
         return redirect('home')
 
     if request.method == 'POST':
@@ -181,10 +173,11 @@ def cadastro_empresa(request):
         form = EmpresaForm()
     return render(request, 'monitoramento/form_cadastro.html', {'form': form, 'titulo': 'Nova Empresa Matriz'})
 
+
 @login_required
 def editar_empresa(request, empresa_id):
     empresa = get_object_or_404(Empresa, id=empresa_id)
-    
+
     permissao = False
     if request.user.is_superuser:
         permissao = True
@@ -199,7 +192,7 @@ def editar_empresa(request, empresa_id):
     if not permissao:
         messages.error(request, "Você não tem permissão para editar esta empresa.")
         return redirect('home')
-        
+
     if request.method == 'POST':
         form = EmpresaForm(request.POST, request.FILES, instance=empresa)
         if form.is_valid():
@@ -210,20 +203,17 @@ def editar_empresa(request, empresa_id):
         form = EmpresaForm(instance=empresa)
     return render(request, 'monitoramento/form_cadastro.html', {'form': form, 'titulo': f"Editar: {empresa.nome}"})
 
+
 @login_required
 def excluir_empresa(request, empresa_id):
     if not request.user.is_superuser:
         messages.error(request, "Apenas administradores globais podem excluir empresas.")
         return redirect('home')
-        
+
     empresa = get_object_or_404(Empresa, id=empresa_id)
     empresa.delete()
     messages.warning(request, "Empresa e seus dados foram removidos.")
     return redirect('listar_empresas')
-
-# ======================
-# UNIDADES E SENSORES
-# ======================
 
 @login_required
 def unidades(request):
@@ -236,6 +226,7 @@ def unidades(request):
         except Perfil.DoesNotExist:
             return redirect('home')
     return render(request, "monitoramento/unidades.html", {"unidades": lista_unidades})
+
 
 @login_required
 def cadastro_unidade(request):
@@ -254,8 +245,9 @@ def cadastro_unidade(request):
             return redirect('unidades')
     else:
         form = UnidadeForm(empresa=empresa_usuario)
-        
+
     return render(request, 'monitoramento/form_cadastro.html', {'form': form, 'titulo': 'Nova Unidade Operacional'})
+
 
 @login_required
 def sensores(request):
@@ -281,9 +273,10 @@ def sensores(request):
             pass
 
     return render(request, "monitoramento/sensores.html", {
-        "sensores": lista_sensores, 
+        "sensores": lista_sensores,
         "logs": logs_sensores
     })
+
 
 @login_required
 def cadastro_sensor(request):
@@ -304,10 +297,6 @@ def cadastro_sensor(request):
         form = SensorForm(empresa=empresa_usuario)
     return render(request, 'monitoramento/form_cadastro.html', {'form': form, 'titulo': 'Cadastrar Sensor IoT'})
 
-# ======================
-# SIMULAÇÃO E VISUALIZAÇÃO
-# ======================
-
 @login_required
 def simular_sensor(request):
     if request.user.is_superuser:
@@ -327,12 +316,12 @@ def simular_sensor(request):
         t = round(random.uniform(20.0, 35.0), 1)
         u = round(random.uniform(40.0, 80.0), 1)
         g = round(random.uniform(0.0, 5.0), 2)
-        
+
         s.temperatura = t
         s.umidade = u
         s.gas_nh3 = g
         s.save()
-        
+
         if collection is not None:
             try:
                 documento = {
@@ -353,11 +342,12 @@ def simular_sensor(request):
     messages.success(request, f"Simulação concluída! {count_leituras} novas leituras geradas.")
     return redirect("sensores")
 
+
 @login_required
 def planta(request):
     unidade_id = request.GET.get('unidade')
     unidade_nome = "Matriz Principal"
-    
+
     query_unidade = Unidade.objects.all()
     if not request.user.is_superuser:
         try:
@@ -370,12 +360,8 @@ def planta(request):
     else:
         if primeira := query_unidade.first():
             unidade_nome = primeira.nome
-        
-    return render(request, "monitoramento/planta.html", {'unidade_nome': unidade_nome})
 
-# ======================
-# REGISTRO DE USUÁRIOS
-# ======================
+    return render(request, "monitoramento/planta.html", {'unidade_nome': unidade_nome})
 
 @login_required
 def cadastro_usuario(request, empresa_id=None):
@@ -399,18 +385,18 @@ def cadastro_usuario(request, empresa_id=None):
         if form.is_valid():
             user_criado = form.save()
             empresa_final = form.cleaned_data.get('empresa') or empresa_alvo
-            
+
             Perfil.objects.create(
-                user=user_criado, 
-                empresa=empresa_final, 
+                user=user_criado,
+                empresa=empresa_final,
                 cargo=form.cleaned_data['cargo']
             )
-            
+
             messages.success(request, f"Usuário {user_criado.username} cadastrado!")
             return redirect('gerenciar_equipe')
     else:
         form = RegistroUsuarioForm(empresa=empresa_alvo)
-    
+
     titulo = f"Novo Usuário - {empresa_alvo.nome}" if empresa_alvo else "Novo Usuário (Admin)"
     return render(request, 'monitoramento/form_cadastro.html', {'form': form, 'titulo': titulo})
 
@@ -439,11 +425,11 @@ def registro_externo(request):
                     empresa=nova_empresa,
                     cargo="Gestor"
                 )
-                
+
                 login(request, novo_usuario)
                 messages.success(request, f"Bem-vindo! Sua empresa {nome_empresa} foi registrada.")
                 return redirect('home')
         except Exception as e:
             messages.error(request, f"Erro ao registrar: {e}")
-    
+
     return render(request, 'auth/registro.html')

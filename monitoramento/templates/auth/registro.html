@@ -11,8 +11,7 @@
             --bg-dark: #16181d;
             --card-bg: #22252b;
             --accent-cyan: #00e0ff;
-            --text-muted: #cbd5e1; /* Tom Sky Blue para leitura clara */
-        }
+            --text-muted: #cbd5e1;
 
         body {
             background-color: var(--bg-dark);
@@ -31,7 +30,6 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.5);
         }
 
-        /* --- CORREÇÃO DE LEGIBILIDADE --- */
         .form-label {
             color: var(--text-muted) !important;
             font-weight: 600;
@@ -67,11 +65,10 @@
             margin-bottom: 20px;
         }
 
-        /* --- BOTÃO PRINCIPAL --- */
         .btn-info {
             background-color: var(--accent-cyan);
             border: none;
-            color: #16181d; /* Texto escuro para contraste */
+            color: #16181d;
             font-weight: 800;
             transition: all 0.3s;
             letter-spacing: 0.5px;
@@ -83,7 +80,6 @@
             box-shadow: 0 5px 15px rgba(0, 224, 255, 0.3);
         }
 
-        /* Ajuste do link de voltar */
         .back-to-login {
             color: var(--text-muted) !important;
             text-decoration: none;
@@ -112,7 +108,7 @@
 
         <form method="post">
             {% csrf_token %}
-            
+
             <div class="section-title"><i class="fas fa-city me-2"></i>Dados da Empresa Matriz</div>
             <div class="row">
                 <div class="col-md-7 mb-3">

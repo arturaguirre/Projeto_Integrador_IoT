@@ -1,8 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
 from .models import Empresa, Unidade, Sensor, Perfil
-
-# Atributos de estilo para consistência visual
 css_attrs = {'class': 'form-control bg-dark text-white border-secondary'}
 select_attrs = {'class': 'form-select bg-dark text-white border-secondary'}
 
@@ -79,8 +77,7 @@ class RegistroUsuarioForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user_empresa = kwargs.pop('empresa', None)
         super(RegistroUsuarioForm, self).__init__(*args, **kwargs)
-        
-        # Se for um Gestor criando alguém, ele não pode escolher a empresa (já é a dele)
+
         if user_empresa:
             self.fields['empresa'].queryset = Empresa.objects.filter(id=user_empresa.id)
             self.fields['empresa'].initial = user_empresa
