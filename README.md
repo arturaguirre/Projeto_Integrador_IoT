@@ -1,38 +1,39 @@
-*Boreas IOT*
+<div align="center">
 
-Plataforma Full Stack para monitoramento térmico industrial em tempo real, integrando telemetria de sensores com uma interface de alta performance.
+# Boreas IOT
 
-''' Stack Tecnológica'''
+**Plataforma Full Stack para monitoramento térmico industrial em tempo real, integrando telemetria de sensores com uma interface de alta performance.**
 
-'''Backend: Python 3.12, Django 6.0.1, Django ORM '''
+</div>
 
-'''Frontend: JavaScript (ES6+), Bootstrap 5, Chart.js, CSS3 (Custom Dark Theme)'''
+---
 
-'''Bancos de Dados: SQLite (Relacional), MongoDB (Logs de Telemetria)'''
+##  Stacks
 
-'''Segurança: Autenticação baseada em níveis de acesso e validação dinâmica de credenciais.'''
+* **Backend:** Python 3.12, Django 6.0.1, Django ORM
+* **Frontend:** JavaScript (ES6+), Bootstrap 5, Chart.js, CSS3 (Custom Dark Theme)
+* **Bancos de Dados:** SQLite (Relacional), MongoDB (Logs de Telemetria)
+* **Segurança:** Autenticação baseada em níveis de acesso e validação dinâmica de credenciais.
 
-*Funcionalidades Chave*
-- Monitoramento Real-time: Dashboard interativo com visualização de dados via Chart.js.
+---
 
-- Arquitetura Multi-Tenant: Gestão segregada de Matrizes, Filiais e Equipes.
+## Funcionalidades Chave
 
-- Simulador de Sensores: Algoritmo integrado para geração de massa de dados em tempo real.
+* **Monitoramento Real-time:** Dashboard interativo com visualização de dados via Chart.js.
+* **Arquitetura Multi-Tenant:** Gestão segregada de Matrizes, Filiais e Equipes.
+* **Simulador de Sensores:** Algoritmo integrado para geração de massa de dados em tempo real.
+* **UX Industrial:** Interface focada em dashboards de baixa fadiga visual e alta legibilidade.
 
-- UX Industrial: Interface focada em dashboards de baixa fadiga visual e alta legibilidade.
+---
 
-*Como Executar*
+##  Como Executar
 
-*Setup do Ambiente:*
-'''Bash'''
-'''python -m venv venv
-source venv/Scripts/activate  # Windows
-pip install -r requirements.txt'''
-
-*Migrações e Banco*
-'''Bash'''
-'''python manage.py migrate'''
-
-*Inicialização*
-'''Bash
-python manage.py runserver'''
+### Setup do Ambiente:
+```bash
+python -m venv venv
+# No Windows:
+source venv/Scripts/activate  
+# Instalação:
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver```
